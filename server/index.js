@@ -40,11 +40,11 @@ async function updateSitemapFile() {
   }
 }
 
-app.get('/read-sitemap', async (req, res) => {
+app.get('/sitemap.xml', async (req, res) => {
   try {
     const existingXml = await fs.readFile(filePath, 'utf-8');
-    console.log(existingXml);
-    res.status(200).send(existingXml);
+    res.setHeader('Content-Type', 'application/xml');
+    res.status(200).end(existingXml);
   } catch (error) {
     console.error('Error reading sitemap:', error);
     res.status(500).send('Internal Server Error');
