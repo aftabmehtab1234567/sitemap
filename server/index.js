@@ -22,13 +22,15 @@ async function updateSitemapFile() {
 
     // Remove duplicates from existing XML
     const uniqueExistingUrls = new Set(existingXml.match(/<loc>(.*?)<\/loc>/g) || []);
-    existingXml = Array.from(uniqueExistingUrls).join('\n');
+    existingXml = Array.from(uniqueExistingUrls).map(url => `<sitemap>${url}</sitemap>`).join('\n');
+
+
 
     // Add new dynamic URLs to the Set
     const dynamicUrlsArray = Array.from(dynamicUrls).map(url => `<sitemap>\n<loc>${url}</loc>\n</sitemap>`);
 
     // Combine existing XML with new dynamic URLs
-    const combinedXml = `<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${existingXml.trim()}\n${dynamicUrlsArray.join('\n')}\n</sitemapindex>`;
+    const combinedXml = `<sitemapindex xmlns="http://localhost:3008/schemas/sitemap/0.9">\n${existingXml.trim()}\n${dynamicUrlsArray.join('\n')}\n</sitemapindex>`;
 
     // Write combined XML to the file
     await fs.writeFile(filePath, combinedXml, 'utf-8');
