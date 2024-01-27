@@ -1,31 +1,43 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useLocation } from 'react-router-dom';
 
 const AutoUpdateSitemap = () => {
-  const location = useLocation();
+  const [sitemapUrls, setSitemapUrls] = useState([]);
 
   useEffect(() => {
-    const updateSitemap = async () => {
-      const currentUrl = window.location.href;
+    const fetchAndGenerateSitemap = async () => {
       try {
-        await axios.post('http://localhost:3008/add-url', {
-          url: currentUrl,
-        });
+        const response = await axios.get('http://localhost:3008/sitemap.xml');
+        const xmlContent = response.data;
+        
+        // Parse XML content to extract URLs
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(xmlContent, 'text/xml');
+        const locElements = xmlDoc.getElementsByTagName('loc');
 
-        console.log('Sitemap updated successfully!');
+        // Extract URLs from the XML content
+        const extractedUrls = Array.from(locElements).map((locElement) => locElement.textContent);
+
+        // Now you have the extracted URLs, and you can use them as needed
+        console.log('Extracted URLs:', extractedUrls);
+        setSitemapUrls(extractedUrls);
       } catch (error) {
-        console.error('Error updating sitemap:', error.message);
+        console.error('Error fetching and updating sitemap:', error);
       }
     };
 
-    // Call the updateSitemap function whenever the component mounts or the URL changes
-    updateSitemap();
-  }, [location.pathname]); // Dependency array includes the pathname
+    fetchAndGenerateSitemap();
+  }, []);
 
+  // Render the component using sitemapUrls
   return (
     <div>
-      <p>Automatically updating sitemap...</p>
+      <h3>Sitemap URLs:</h3>
+      <ul>
+        {sitemapUrls.map((url, index) => (
+          <li key={index}>{url}</li>
+        ))}
+      </ul>
     </div>
   );
 };
