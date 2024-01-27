@@ -30,12 +30,21 @@ async function updateSitemapFile() {
     $('a').each((index, element) => {
       const href = $(element).attr('href');
       if (href) {
-        extractedUrls.push(href);
+        // Prepend the base URL if it's not already there
+        const completeUrl = href.startsWith('http') ? href : new URL(href, websiteUrl).toString();
+        extractedUrls.push(completeUrl);
       }
     });
 
-    // Add extracted URLs to the dynamicUrls Set
-    extractedUrls.forEach((url) => dynamicUrls.add(url));
+    // Remove duplicates from the extracted URLs
+    const uniqueExtractedUrls = new Set(extractedUrls);
+
+    // Add only the new extracted URLs to the dynamicUrls Set
+    uniqueExtractedUrls.forEach((url) => {
+      if (!dynamicUrls.has(url)) {
+        dynamicUrls.add(url);
+      }
+    });
 
     // Read existing sitemap content
     let existingXml = '';
@@ -58,8 +67,6 @@ async function updateSitemapFile() {
     // Write combined XML to the file
     await fs.writeFile(filePath, combinedXml, 'utf-8');
     console.log(`XML file '${filePath}' updated successfully.`);
-
-    dynamicUrls.clear();
 
     // Close Puppeteer browser
     await browser.close();

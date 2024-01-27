@@ -1,15 +1,15 @@
 <sitemapindex xmlns="http://localhost:3008/schemas/sitemap/0.9">
 
 <sitemap>
-<loc>/</loc>
+<loc>http://localhost:3000/</loc>
 </sitemap>
 <sitemap>
-<loc>/about</loc>
+<loc>http://localhost:3000/about</loc>
 </sitemap>
 <sitemap>
-<loc>/contact</loc>
+<loc>http://localhost:3000/contact</loc>
 </sitemap>
 <sitemap>
-<loc>/hello</loc>
+<loc>http://localhost:3000/hello</loc>
 </sitemap>
 </sitemapindex>
